@@ -1,3 +1,7 @@
+using RedisCaching.Interfaces;
+using RedisCaching.Services;
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = "localhost:6397";
     options.InstanceName = "RedisCaching:";
 });
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    _ => ConnectionMultiplexer.Connect("localhost:6379")
+);
+
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
 builder.Services.AddControllers();
 
